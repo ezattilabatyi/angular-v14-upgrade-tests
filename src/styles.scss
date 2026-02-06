@@ -1,1 +1,239 @@
-/* You can add global styles to this file, and also import other style files */
+$ips-colors--primary: #1976d2;
+$selected-color: $ips-colors--primary;
+$row-border-width: 0;
+$ag-icons-path: '~ag-grid-community/src/styles/ag-theme-material/icons/';
+
+@import 'ag-grid-community/src/styles/ag-grid';
+@import 'ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham-mixin';
+// FIXME [serfezea] fix the imports and themes when hitting final grid version
+
+$_ips-grid-cell-border--color: #e0e0e0;
+$_ips-grid-cell-border: -1px -1px 0 0 $_ips-grid-cell-border--color inset;
+
+.ag-theme-balham {
+  @include ag-theme-balham();
+}
+
+
+%ag-grid--header-text-position-change {
+  .ag-header-cell-menu-button {
+    //display: none;
+  }
+
+  .ag-header-group-cell .ag-header-group-text,
+  .ag-header-cell-label .ag-header-cell-text {
+    width: 100%;
+    float: none;
+  }
+}
+
+.ag-grid-container {
+  width: calc(100% - 20px);
+  margin: 10px;
+  min-height: 200px;
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+
+  &--bordered ag-grid-angular {
+    .ag-cell {
+      box-shadow: $_ips-grid-cell-border;
+    }
+
+    .ag-cell-first-right-pinned {
+      box-shadow: $_ips-grid-cell-border, -1px 0 0 0 $_ips-grid-cell-border--color;
+    }
+  }
+
+  &--centered-header,
+  .ag-header-cell.ips-text-align--center,
+  .ag-header-cell.ips-text-align--date {
+    @extend %ag-grid--header-text-position-change;
+
+    .ag-header-group-cell,
+    .ag-header-cell-label {
+      text-align: center;
+    }
+  }
+
+  .ag-header-cell.ips-text-align--right,
+  .ag-header-cell.ips-text-align--number {
+    @extend %ag-grid--header-text-position-change;
+
+    .ag-header-group-cell,
+    .ag-header-cell-label {
+      text-align: right;
+    }
+  }
+
+  ///////////////////////////////////////////
+  // hidden checkbox hack
+  &--hide-checkbox-selection {
+    ag-grid-angular {
+      .ag-row-selected {
+        .ag-group-expanded,
+        .ag-group-contracted {
+          filter: invert(1); // hardcoded black color needs to be white
+        }
+      }
+
+      .ag-group-expanded,
+      .ag-group-contracted {
+        position: relative;
+        z-index: 2;
+
+        ~ .ag-group-value {
+          display: inline !important;
+        }
+      }
+
+      .ag-selection-checkbox span {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        position: absolute !important;
+        top: 0 !important;
+        right: 0 !important;
+        z-index: 1;
+        opacity: 0 !important;
+      }
+    }
+  }
+  ///////////////////////////////////////////
+
+  ag-grid-angular {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+
+    &[disabled],
+    [disabled] & {
+      opacity: 0.5;
+      pointer-events: none !important;
+    }
+
+    .ag-row-selected {
+      background-color: $ips-colors--primary;
+      color: #fff;
+
+      .material-icons {
+        color: #fff !important;
+      }
+
+      .ips-color--red {
+        color: #fff !important;
+      }
+    }
+
+    .ag-cell {
+      border: 0 none transparent !important;
+
+      &-focus {
+        background-color: #3aa9d9 !important;
+      }
+    }
+
+    .material-icons {
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    mat-form-field .material-icons {
+      margin-right: 0;
+    }
+  }
+
+  .ag-menu {
+    max-width: 100%;
+    min-width: 220px;
+
+    etrm-sidebar & {
+      min-width: 170px;
+    }
+
+    .ag-tab-header,
+    .ag-filter-body-wrapper {
+      min-width: 100%;
+    }
+  }
+
+  .ag-filter label {
+    padding-left: 0;
+  }
+
+  .ips-grid-row {
+    &--color-weekend {
+      background-color: #98c9fa;
+    }
+
+    &--color-weekday {
+      background-color: #a6e1dd;
+    }
+  }
+
+  .ips-grid-cell {
+    &--editable {
+      background-color: #ddffde;
+    }
+
+    &--partially-editable {
+      background-color: rgba(orange, 0.3);
+
+      &.ips-grid-cell--highlight {
+        $_color-mix-between-partial-and-highlight: mix(orange, #3aa9d9, $weight: 66%);
+
+        background-color: rgba($_color-mix-between-partial-and-highlight, 0.3);
+
+        &.ag-cell-range-selected {
+          background-color: rgba($_color-mix-between-partial-and-highlight, 0.6);
+        }
+      }
+    }
+
+    &--disabled {
+      &,
+      &.ips-grid-cell--highlight {
+        background-color: #dedede;
+      }
+    }
+
+    &--rowspan {
+      display: flex;
+      background-color: #fff;
+
+      > * {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        width: 100%;
+        margin: auto;
+        padding-bottom: 2px; // position fix
+      }
+    }
+
+    // do not use `&` parent selector inside `:not` like this: `:not(&--disabled`
+    // will work on dev but not in prod
+    // a minifier will drop the space inside the not rule and will break the selector
+    &--highlight {
+      background-color: #cee2f7;
+    }
+  }
+}
+
+// hotfix for cell ellipsis with checkbox
+.ag-cell-wrapper {
+  display: flex;
+  flex-direction: row;
+
+  .ag-cell-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+body {
+  margin: 0;
+}

@@ -1,0 +1,30 @@
+<div mat-dialog-title>
+  <span>{{ data.title }}</span>
+  <button mat-icon-button mat-dialog-close>
+    close
+<!--    <mat-icon>close</mat-icon>-->
+  </button>
+<!--  <mat-divider></mat-divider>-->
+</div>
+
+<div mat-dialog-content>
+  <div *ngIf="!data.template; else contentTemplate"
+       class="white-space--pre-wrap">
+    {{ data.content }}
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-raised-button (click)="onClick(true)">
+    {{ confirmButtonText }}
+  </button>
+  <button *ngIf="!data?.hide?.cancelButton" mat-raised-button (click)="onClick(false)">
+    {{ cancelButtonText }}
+  </button>
+</div>
+
+<ng-template #contentTemplate>
+<!--  <ng-container [ngTemplateOutlet]="data.template">-->
+<!--  </ng-container>-->
+  fallback ...
+</ng-template>
